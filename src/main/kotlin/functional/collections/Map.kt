@@ -33,8 +33,16 @@ inline fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T> {
     }
     return list
 }
+// T i R (resaver) - typy generyczne
+inline fun <T, R> Iterable<T>.map(transformation: (T) -> R): List<R> {
+    val size = if (this is Collection<*>) this.size else 10
+    val list = ArrayList<R>(size)
+    for (elem in this) {
+        list.add(transformation(elem))
+    }
+    return list
+}
 
-// TODO
 
 fun main() {
     val numbers = 1..10
@@ -64,18 +72,18 @@ class MapTest {
 
     @Test
     fun mapTests() {
-//        val numbers = 1..5
-//        val names = listOf("Mike", "Jane", "Marcin", "John", "James")
-//
-//        val upper = names.map { it.uppercase() }
-//        val doubled = numbers.map { it * 2 }
-//
-//        assertEquals(listOf("MIKE", "JANE", "MARCIN", "JOHN", "JAMES"), upper)
-//        assertEquals(listOf(2, 4, 6, 8, 10), doubled)
-//
-//        val list = listOf(1, 2, 3)
-//        assertEquals(list.map { it * 2 }, listOf(2, 4, 6))
-//        assertEquals(list.map { "$it!" }, listOf("1!", "2!", "3!"))
-//        assertEquals(list.map { it % 2 == 0 }, listOf(false, true, false))
+        val numbers = 1..5
+        val names = listOf("Mike", "Jane", "Marcin", "John", "James")
+
+        val upper = names.map { it.uppercase() }
+        val doubled = numbers.map { it * 2 }
+
+        assertEquals(listOf("MIKE", "JANE", "MARCIN", "JOHN", "JAMES"), upper)
+        assertEquals(listOf(2, 4, 6, 8, 10), doubled)
+
+        val list = listOf(1, 2, 3)
+        assertEquals(list.map { it * 2 }, listOf(2, 4, 6))
+        assertEquals(list.map { "$it!" }, listOf("1!", "2!", "3!"))
+        assertEquals(list.map { it % 2 == 0 }, listOf(false, true, false))
     }
 }

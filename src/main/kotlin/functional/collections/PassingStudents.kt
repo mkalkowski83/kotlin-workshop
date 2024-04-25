@@ -7,7 +7,10 @@ import kotlin.test.assertEquals
 // who have got more than 15 points in the semester and a result of at least 50.
 // Display in alphabetical order (surname then name), in the format:
 // “{name} {surname}, {result}”
-fun List<Student>.makePassingStudentsList(): String = TODO()
+fun List<Student>.makePassingStudentsList(): String = this
+    .filter { it.result >= 50 && it.pointsInSemester > 15 }
+    .sortedWith(compareBy({ it.surname }, { it.name }))
+    .joinToString(separator = "\n") { "${it.name} ${it.surname}, ${it.result}" }
 
 data class Student(
     val name: String,

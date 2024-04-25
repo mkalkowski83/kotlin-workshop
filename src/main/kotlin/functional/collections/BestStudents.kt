@@ -10,7 +10,16 @@ import kotlin.test.assertEquals
 // The best student gets $5000, the next 3 get $3000 and the next 6 get $1000.
 // Display students in alphabetical order (compare first surname then name)
 // in the format “{name} {surname}, ${internship size}”
-fun List<Student>.makeBestStudentsList(): String = TODO()
+fun List<Student>.makeBestStudentsList(): String = this
+    .filter { it.result >= 80 && it.pointsInSemester >= 30 }
+    .sortedByDescending { it.result }
+    .zip(INTERNSHIPS)
+    .sortedWith(compareBy({ it.first.surname }, { it.first.name }))
+    .joinToString(separator = "\n") { (student, internship) ->
+        "${student.name} ${student.surname}, $$internship"
+    }
+
+private val INTERNSHIPS = List(1) { 5_000 } + List(3) { 3_000 } + List(6) { 1_000 }
 
 data class Student(
     val name: String,

@@ -4,7 +4,18 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 fun <T> List<T>.plusAt(index: Int, element: T): List<T> {
-    TODO()
+    require(index in 0 .. size) { "Incorrect argument" }
+
+    val mutableMap = this.toMutableList()
+    mutableMap.add(index, element)
+
+    return mutableMap
+
+    return when (index) {
+        0 -> listOf(element) + this
+        size -> this + element
+        else -> this.subList(0, index) + element + this.subList(index, size)
+    }
 }
 
 fun main() {
