@@ -5,12 +5,15 @@ import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.coroutineContext
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 suspend fun <T, R> Iterable<T>.mapAsync(
     transformation: suspend (T) -> R
-): List<R> = TODO()
+): List<R> = coroutineScope {
+    map { async { transformation(it) } }.awaitAll()
+}
 
 class MapAsyncTest {
     @Test

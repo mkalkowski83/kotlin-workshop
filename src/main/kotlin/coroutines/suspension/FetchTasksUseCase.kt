@@ -15,12 +15,25 @@ class FetchTasksUseCase(
     private val callbackUseCase: FetchTasksCallbackUseCase
 ) {
     @Throws(ApiException::class)
-    suspend fun fetchTasks(): List<Task> =
-        TODO()
-    suspend fun fetchTasksResult(): Result<List<Task>> =
-        TODO()
-    suspend fun fetchTasksOrNull(): List<Task>? =
-        TODO()
+    suspend fun fetchTasks(): List<Task> = suspendCancellableCoroutine { continuation ->
+        val cancellable = callbackUseCase.fetchTasks(
+            onSuccess = { tasks -> continuation.resume(tasks) },
+            onError = { error -> continuation.resumeWithException(error) }
+        )
+        continuation.invokeOnCancellation { cancellable.cancel() }
+    }
+
+    suspend fun fetchTasksResult(): Result<List<Task>> = try {
+        Result.success(fetchTasks())
+    } catch (e: Throwable) {
+        Result.failure(e)
+    }
+
+    suspend fun fetchTasksOrNull(): List<Task>? = try {
+        fetchTasks()
+    } catch (e: Throwable) {
+        null
+    }
 }
 
 interface FetchTasksCallbackUseCase {
@@ -37,8 +50,8 @@ data class Task(val name: String, val priority: Int)
 class ApiException(val code: Int, message: String): Throwable(message)
 
 class FetchTasksTests {
-    val someTasks = listOf(Task("1", 123), Task("2", 456))
-    val someException = ApiException(500, "Some exception")
+    private val someTasks = listOf(Task("1", 123), Task("2", 456))
+    private val someException = ApiException(500, "Some exception")
 
     @Test
     fun `fetchTasks should resume with result`() = runTest {

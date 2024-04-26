@@ -9,9 +9,6 @@ import kotlin.random.Random
 
 suspend fun main() {
     println("Before")
-
-
-
     println("After")
 }
 
